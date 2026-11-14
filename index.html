@@ -10,7 +10,7 @@
   <style>
     :root {
       --bg: #090a0f;
-      --card-bg: rgba(18, 20, 29, 0.85);
+      --card-bg: rgba(18, 20, 29, 0.88);
       --accent: #00ff88;
       --spotify: #1DB954;
       --cyan: #00e5ff;
@@ -135,26 +135,16 @@
       box-shadow: 0 12px 28px rgba(29, 185, 84, 0.5);
     }
 
-    .btn-sync {
-      background: linear-gradient(135deg, var(--cyan), var(--accent));
+    .btn-copy {
+      background: linear-gradient(135deg, #1DB954 0%, var(--accent) 100%);
       color: #000;
-      box-shadow: 0 8px 24px rgba(0, 229, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 255, 136, 0.35);
+      font-size: 17px;
     }
 
-    .btn-sync:hover {
+    .btn-copy:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(0, 229, 255, 0.5);
-    }
-
-    .btn-secondary {
-      background: #1a1e29;
-      color: var(--text);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-secondary:hover {
-      background: #242938;
-      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 12px 30px rgba(0, 255, 136, 0.55);
     }
 
     .status-box {
@@ -239,9 +229,9 @@
         </button>
 
         <ol class="steps">
-          <li>Power on your <b>Smart BagTag</b>.</li>
-          <li>Connect your phone to Wi-Fi: <b>Smart-BagTag-Setup</b>.</li>
-          <li>Tap the green button above to authorize your Spotify.</li>
+          <li>Tap the green button above to authorize Spotify.</li>
+          <li>Tap <b>Copy Setup Key</b>.</li>
+          <li>Connect to Wi-Fi <b>Smart-BagTag-Setup</b> on your phone, paste the key, and tap Save!</li>
         </ol>
       </div>
 
@@ -254,25 +244,21 @@
         </div>
       </div>
 
-      <!-- VIEW 3: SUCCESS (TOKEN GENERATED + 1-CLICK SYNC) -->
+      <!-- VIEW 3: SUCCESS (TOKEN GENERATED + COPY SETUP KEY) -->
       <div id="success-view" style="display: none;">
         <div style="font-size: 40px; margin-bottom: 8px;">&#10024;</div>
         <h2 style="font-family: 'Orbitron'; font-size: 20px; color: var(--accent); margin-bottom: 6px;">SPOTIFY LINKED!</h2>
-        <p id="user-greeting" style="font-size: 14px; color: var(--cyan); margin-bottom: 16px; font-weight: bold;"></p>
+        <p id="user-greeting" style="font-size: 14px; color: var(--cyan); margin-bottom: 20px; font-weight: bold;"></p>
 
-        <button id="btn-sync" class="btn btn-sync">
-          &#9889; 1-Click Sync to BagTag
-        </button>
-
-        <button id="btn-copy" class="btn btn-secondary">
+        <button id="btn-copy" class="btn btn-copy">
           &#128203; Copy Setup Key
         </button>
 
         <div class="status-box">
-          <div style="font-weight: bold; margin-bottom: 6px; color: #fff;">Your Personal BagTag Token:</div>
+          <div style="font-weight: bold; margin-bottom: 6px; color: #fff;">Your Personal Setup Key:</div>
           <div id="token-box" class="token-display">...</div>
-          <div id="sync-msg" style="font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
-            Tap <b>1-Click Sync</b> while connected to your home Wi-Fi, or paste this into the BagTag Wi-Fi setup page.
+          <div style="font-size: 13px; color: #cbd5e1; margin-top: 10px; line-height: 1.5;">
+            <b>Next Step:</b> Connect your phone to Wi-Fi <b>Smart-BagTag-Setup</b>, paste this key into the <i>Spotify Setup Key</i> field, and tap <b>Save</b>!
           </div>
         </div>
       </div>
@@ -286,7 +272,6 @@
 
   <script>
     // ── SPOTIFY PKCE CONFIGURATION ──────────────────────────────
-    // Replace with your Spotify App Client ID (no secret needed for PKCE):
     const CLIENT_ID = 'e2d326fa8801404e84113df7a62e545e';
     const SCOPE = 'user-read-currently-playing user-read-playback-state';
 
@@ -398,7 +383,7 @@
       }
     }
 
-    // ── STEP 3: DISPLAY SUCCESS & AUTO-SYNC ─────────────────────
+    // ── STEP 3: DISPLAY SUCCESS & COPY KEY ──────────────────────
     function showSuccess(refreshToken, userName) {
       document.getElementById('loading-view').style.display = 'none';
       document.getElementById('success-view').style.display = 'block';
@@ -410,36 +395,12 @@
         navigator.clipboard.writeText(refreshToken).then(() => {
           const copyBtn = document.getElementById('btn-copy');
           copyBtn.innerText = '✅ Copied to Clipboard!';
-          copyBtn.style.borderColor = 'var(--accent)';
+          copyBtn.style.background = '#1ed760';
           setTimeout(() => {
             copyBtn.innerText = '📋 Copy Setup Key';
-            copyBtn.style.borderColor = '';
+            copyBtn.style.background = '';
           }, 2500);
         });
-      });
-
-      // 1-Click Sync to BagTag over Local Network
-      document.getElementById('btn-sync').addEventListener('click', async () => {
-        const syncMsg = document.getElementById('sync-msg');
-        syncMsg.innerHTML = '<span style="color:var(--cyan);">⏳ Sending setup key to Smart BagTag...</span>';
-
-        const endpoints = [
-          'http://bagtag.local/save',
-          'http://192.168.4.1/save'
-        ];
-
-        let success = false;
-        for (const url of endpoints) {
-          try {
-            const formData = new FormData();
-            formData.append('token', refreshToken);
-            await fetch(url, { method: 'POST', body: formData, mode: 'no-cors' });
-            success = true;
-            break;
-          } catch (e) {}
-        }
-
-        syncMsg.innerHTML = '<span style="color:var(--accent); font-weight:bold;">⚡ Sent to BagTag! Your screen will update shortly.</span>';
       });
     }
 
