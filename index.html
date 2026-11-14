@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y2KSwags - Smart BagTag Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(18, 20, 29, 0.85);
+      --accent: #00ff88;
+      --spotify: #1DB954;
+      --cyan: #00e5ff;
+      --pink: #ff007f;
+      --text: #f0f4f8;
+      --text-muted: #8b9bb4;
+      --border: rgba(0, 255, 136, 0.25);
+      --glow: rgba(0, 255, 136, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 229, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(255, 0, 127, 0.08) 0%, transparent 40%),
+        linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 200%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+      animation: scan 4s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(50%); }
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--accent);
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--cyan) 70%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      margin-bottom: 12px;
+    }
+
+    .btn-spotify {
+      background: var(--spotify);
+      color: #000;
+      box-shadow: 0 8px 24px rgba(29, 185, 84, 0.35);
+    }
+
+    .btn-spotify:hover {
+      background: #1ed760;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(29, 185, 84, 0.5);
+    }
+
+    .btn-sync {
+      background: linear-gradient(135deg, var(--cyan), var(--accent));
+      color: #000;
+      box-shadow: 0 8px 24px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-sync:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 229, 255, 0.5);
+    }
+
+    .btn-secondary {
+      background: #1a1e29;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: #242938;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .status-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 16px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .token-display {
+      width: 100%;
+      background: #0d1017;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--accent);
+      word-break: break-all;
+      margin: 12px 0;
+      max-height: 80px;
+      overflow-y: auto;
+    }
+
+    .steps {
+      text-align: left;
+      margin: 20px 0;
+      padding-left: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .steps li b {
+      color: var(--text);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,0.2);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .footer span {
+      color: var(--pink);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="badge">&#9733; Y2KSWAGS HARDWARE</div>
+      <h1>SMART BAGTAG</h1>
+      <p class="subtitle">Link your personal Spotify in 1-click to display your live music & album cover!</p>
+
+      <!-- VIEW 1: INITIAL STATE (LOGIN BUTTON) -->
+      <div id="login-view">
+        <button id="btn-login" class="btn btn-spotify">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+          Connect with Spotify
+        </button>
+
+        <ol class="steps">
+          <li>Power on your <b>Smart BagTag</b>.</li>
+          <li>Connect your phone to Wi-Fi: <b>Smart-BagTag-Setup</b>.</li>
+          <li>Tap the green button above to authorize your Spotify.</li>
+        </ol>
+      </div>
+
+      <!-- VIEW 2: LOADING / AUTHORIZING -->
+      <div id="loading-view" style="display: none;">
+        <div style="padding: 24px 0;">
+          <div class="spinner" style="width: 36px; height: 36px; border-width: 4px; border-top-color: var(--accent); margin-bottom: 16px;"></div>
+          <h3 style="color: var(--accent); font-family: 'Orbitron'; font-size: 18px;">AUTHORIZING...</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">Connecting to Spotify Web API...</p>
+        </div>
+      </div>
+
+      <!-- VIEW 3: SUCCESS (TOKEN GENERATED + 1-CLICK SYNC) -->
+      <div id="success-view" style="display: none;">
+        <div style="font-size: 40px; margin-bottom: 8px;">&#10024;</div>
+        <h2 style="font-family: 'Orbitron'; font-size: 20px; color: var(--accent); margin-bottom: 6px;">SPOTIFY LINKED!</h2>
+        <p id="user-greeting" style="font-size: 14px; color: var(--cyan); margin-bottom: 16px; font-weight: bold;"></p>
+
+        <button id="btn-sync" class="btn btn-sync">
+          &#9889; 1-Click Sync to BagTag
+        </button>
+
+        <button id="btn-copy" class="btn btn-secondary">
+          &#128203; Copy Setup Key
+        </button>
+
+        <div class="status-box">
+          <div style="font-weight: bold; margin-bottom: 6px; color: #fff;">Your Personal BagTag Token:</div>
+          <div id="token-box" class="token-display">...</div>
+          <div id="sync-msg" style="font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+            Tap <b>1-Click Sync</b> while connected to your home Wi-Fi, or paste this into the BagTag Wi-Fi setup page.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Powered by <b>Y2KSwags</b> &bull; Built with <span>&#9829;</span> for Smart Living
+    </div>
+  </div>
+
+  <script>
+    // ── SPOTIFY PKCE CONFIGURATION ──────────────────────────────
+    // Replace with your Spotify App Client ID (no secret needed for PKCE):
+    const CLIENT_ID = 'e2d326fa8801404e84113df7a62e545e';
+    const SCOPE = 'user-read-currently-playing user-read-playback-state';
+
+    // Auto-detect redirect URI so it works on GitHub Pages, localhost, or any domain!
+    const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+    // ── PKCE HELPER FUNCTIONS ───────────────────────────────────
+    function generateRandomString(length) {
+      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+      const values = crypto.getRandomValues(new Uint8Array(length));
+      return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+    }
+
+    async function sha256(plain) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(plain);
+      return window.crypto.subtle.digest('SHA-256', data);
+    }
+
+    function base64encode(input) {
+      return btoa(String.fromCharCode(...new Uint8Array(input)))
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
+    }
+
+    // ── STEP 1: INITIATE SPOTIFY LOGIN ──────────────────────────
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const codeVerifier = generateRandomString(64);
+      const hashed = await sha256(codeVerifier);
+      const codeChallenge = base64encode(hashed);
+
+      // Store code_verifier in sessionStorage
+      window.sessionStorage.setItem('code_verifier', codeVerifier);
+
+      const params = new URLSearchParams({
+        client_id: CLIENT_ID,
+        response_type: 'code',
+        redirect_uri: REDIRECT_URI,
+        scope: SCOPE,
+        code_challenge_method: 'S256',
+        code_challenge: codeChallenge,
+      });
+
+      window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+    });
+
+    // ── STEP 2: HANDLE SPOTIFY REDIRECT (TOKEN EXCHANGE) ────────
+    async function handleRedirect() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const error = urlParams.get('error');
+
+      if (error) {
+        alert('Spotify authorization failed: ' + error);
+        return;
+      }
+
+      if (code) {
+        // Show loading state
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('loading-view').style.display = 'block';
+
+        const codeVerifier = window.sessionStorage.getItem('code_verifier');
+
+        try {
+          const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              client_id: CLIENT_ID,
+              grant_type: 'authorization_code',
+              code: code,
+              redirect_uri: REDIRECT_URI,
+              code_verifier: codeVerifier,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.refresh_token) {
+            // Clean up the URL to remove the ?code= parameter
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            // Fetch user profile name
+            let userName = 'Music Fan';
+            try {
+              const userRes = await fetch('https://api.spotify.com/v1/me', {
+                headers: { 'Authorization': 'Bearer ' + data.access_token }
+              });
+              const userData = await userRes.json();
+              if (userData.display_name) userName = userData.display_name;
+            } catch (e) {}
+
+            showSuccess(data.refresh_token, userName);
+          } else {
+            alert('Failed to get Refresh Token. Please try again.');
+            document.getElementById('loading-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'block';
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Network error connecting to Spotify: ' + err.message);
+          document.getElementById('loading-view').style.display = 'none';
+          document.getElementById('login-view').style.display = 'block';
+        }
+      }
+    }
+
+    // ── STEP 3: DISPLAY SUCCESS & AUTO-SYNC ─────────────────────
+    function showSuccess(refreshToken, userName) {
+      document.getElementById('loading-view').style.display = 'none';
+      document.getElementById('success-view').style.display = 'block';
+      document.getElementById('user-greeting').innerText = `Welcome, ${userName}!`;
+      document.getElementById('token-box').innerText = refreshToken;
+
+      // Copy button
+      document.getElementById('btn-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(refreshToken).then(() => {
+          const copyBtn = document.getElementById('btn-copy');
+          copyBtn.innerText = '✅ Copied to Clipboard!';
+          copyBtn.style.borderColor = 'var(--accent)';
+          setTimeout(() => {
+            copyBtn.innerText = '📋 Copy Setup Key';
+            copyBtn.style.borderColor = '';
+          }, 2500);
+        });
+      });
+
+      // 1-Click Sync to BagTag over Local Network
+      document.getElementById('btn-sync').addEventListener('click', async () => {
+        const syncMsg = document.getElementById('sync-msg');
+        syncMsg.innerHTML = '<span style="color:var(--cyan);">⏳ Sending setup key to Smart BagTag...</span>';
+
+        const endpoints = [
+          'http://bagtag.local/save',
+          'http://192.168.4.1/save'
+        ];
+
+        let success = false;
+        for (const url of endpoints) {
+          try {
+            const formData = new FormData();
+            formData.append('token', refreshToken);
+            await fetch(url, { method: 'POST', body: formData, mode: 'no-cors' });
+            success = true;
+            break;
+          } catch (e) {}
+        }
+
+        syncMsg.innerHTML = '<span style="color:var(--accent); font-weight:bold;">⚡ Sent to BagTag! Your screen will update shortly.</span>';
+      });
+    }
+
+    // Run on page load
+    handleRedirect();
+  </script>
+</body>
+</html>
